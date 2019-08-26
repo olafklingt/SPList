@@ -1,0 +1,22 @@
+(
+// required:
+    \name:           "SPList",
+    \path:           "SPList", // almost always the same as the quark name
+    \summary:        "Concatinate Synthesis",
+    \author:         "Olaf Hochherz",
+
+// optional:
+    \since:          "2008",
+    \schelp:         "SPList",
+    \ext_dependancy: "",
+    \url:            "https://github.com/olafklingt/splist",
+
+// If the quark depends on other quarks, you can specify it as a list containing:
+// (1) strings (just the quark name)
+    \dependencies:   ["MathLib","redUniverse"]
+// (2) key->value pairs (name->version)
+//  \dependencies:   [("nameOfDependantQuark" -> 1.0)]
+// or (3) arrays with info in this order: [name, version, repositoryBaseUrl]
+//  \dependencies:   [["nameOfDependantQuark", 1.0, "https://svn.weirdserver.be/trunk/weirdquarks"]]
+
+)

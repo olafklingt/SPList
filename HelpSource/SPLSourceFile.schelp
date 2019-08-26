@@ -1,0 +1,94 @@
+TITLE:: SPLSourceFile
+summary:: soundfile reference for SPList
+categories:: SPList
+related:: Classes/SPList, Classes/Period, Classes/SPEnv, Classes/NRTServerOptions
+
+
+DESCRIPTION::
+
+SPLSourceFile is used to create SPLists from a soundfile.It also calls the SPListAnalyst programm, which creats the analyse files of a soundfile. this binary file is read to create the Periods of a SPList.
+
+CLASSMETHODS::
+
+METHOD:: newSPL
+
+returns directly a new SPList. the SPLSourceFile is referenced by its Periods. this is the normal usecase.
+
+ARGUMENT:: minsize
+the minimum size of a period.
+
+ARGUMENT:: soundfilename
+the name of the soundfile,
+
+ARGUMENT:: anafilename
+the name of the analyse file which has to be written.
+the default is nil in this case the name is: soundfilename++".jspbl"++minsize
+
+ARGUMENT:: minvol
+minimum amplitude (0 to 1) that has to be reached so that a period counts as a distinct period.
+
+returns:: a SPList
+
+METHOD:: new
+
+*new (minsize, soundfilename, anafilename)
+Creates a new SPLSourceFile.
+
+ARGUMENT:: minsize
+The minimum size of a period.
+
+ARGUMENT:: soundfilename
+The name of the soundfile.
+
+ARGUMENT:: anafilename
+The name of the analyse file which has to be written.
+The default is nil in this case the name is: soundfilename++".jspbl"++minsize
+
+ARGUMENT:: minvol
+Minimum amplitude (0 to 1) that has to be reached so that a period counts as a distinct period.
+
+returns:: a SPLSourceFile
+
+PRIVATE:: programargs
+PRIVATE:: program
+
+INSTANCEMETHODS::
+
+
+METHOD:: getNewSPL
+Reads the data from the analyse-file and put it into a new SPList
+
+returns:: a SPList
+
+METHOD:: analyseSoundfile
+Starts the analyse command only when its not done already.
+
+PRIVATE:: init
+
+METHOD:: minsize
+The minimum size of a period.
+
+METHOD:: soundfilename
+The name of the soundfile
+
+returns:: (describe returnvalue here)
+
+METHOD:: anafilename
+The name of the analyse file which has to be written.
+
+METHOD:: minvol
+Minimum amplitude (0 to 1) that has to be reached so that a period counts as a distinct period.
+
+PRIVATE:: sampleRate
+PRIVATE: prFillPeriodArray
+
+PRIVATE: bufnum
+
+EXAMPLES::
+
+normal way of using SPLSourceFile is the following. The SPLSourceFile is rarely needed.
+code::
+a=SPLSourceFile.newSPL(2,"/home/olaf/splisttest.wav");//choose your example file
+s.boot;
+a.play;
+::

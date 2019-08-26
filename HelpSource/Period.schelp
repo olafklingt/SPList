@@ -1,0 +1,206 @@
+TITLE:: Period
+summary:: Period represents one waveset
+categories:: SPList
+related:: Classes/SPList, Classes/Period, Classes/SPEnv, Classes/NRTServerOptions
+
+DESCRIPTION::
+
+Period provides a reference to a section of a SPLSourceFile. It provides an interface to perform Transformations on this.
+
+CLASSMETHODS::
+
+METHOD:: newSine
+It is possible to create Periods with a sine as waveset. this is a special case, normaly Periods get created by SPLSourceFile.
+
+ARGUMENT:: size
+The pitch or length of the waveset.
+
+ARGUMENT:: aamp
+The volume of the waveset.
+
+ARGUMENT:: posi
+A number for the position of the waveset.
+
+ARGUMENT:: ot
+Overton, a multiplication factor for the pitch of the waveset.
+
+ARGUMENT:: par
+The parent SPList of this Period.
+
+returns:: a Period
+
+INSTANCEMETHODS::
+
+METHOD:: amp
+Maximal Amplitude of a Period.
+METHOD:: rms
+RMS of a Period.
+METHOD:: peaks
+Number of local min and maxima.
+METHOD:: delta
+Sum of the difference between samples / size.
+METHOD:: sec
+Duration of a Period in seconds.
+METHOD:: freq
+Duration of a Period in Hz.
+METHOD:: size
+Duration of a Period in samples.
+METHOD:: length
+Duration of a Period in samples.
+equivalent to size in samples
+
+
+METHOD:: plot
+writes this period to a Buffer and plots it. the arguments are the same as Buffer.plot.
+
+PRIVATE:: appendIntoParent
+PRIVATE:: newUsing
+PRIVATE:: small
+PRIVATE:: big
+PRIVATE:: sum
+PRIVATE:: avr
+PRIVATE:: subbig
+PRIVATE:: subsmall
+PRIVATE:: subsum
+PRIVATE:: subavr
+PRIVATE:: flat
+PRIVATE:: nodecount
+PRIVATE:: sineInit
+PRIVATE:: copy
+PRIVATE:: todobegin
+PRIVATE:: print
+PRIVATE:: dup
+PRIVATE:: species
+PRIVATE:: deepsum
+PRIVATE:: do
+PRIVATE:: todoend
+PRIVATE:: init
+PRIVATE:: start
+PRIVATE:: end
+PRIVATE:: nrts_buf
+PRIVATE:: doDeep
+PRIVATE:: deepCopy
+PRIVATE:: node
+PRIVATE:: howDeep
+PRIVATE:: testAllParents
+PRIVATE:: flatten
+PRIVATE:: todolist
+PRIVATE:: performOnPeriod
+PRIVATE:: mult
+
+SECTION:: Transformation methods
+
+METHOD:: delete
+removes a period from its parent.
+
+METHOD:: transposeToFreq
+sets the length of a period to a specific time in Hz.
+
+ARGUMENT:: newfreq
+new length in Hz
+
+returns:: (describe returnvalue here)
+
+METHOD:: transposeToSize
+sets the length of a period to a specific time in samples.
+
+ARGUMENT:: newsize
+new length in samples
+
+METHOD:: transposeToSec
+sets the length of a period to a specific time in seconds.
+
+ARGUMENT:: newSec
+new length in seconds
+
+METHOD:: env
+Applies a SPEnv Envelope on a SPList. a envelope applied on a Period is a special case of amplitude modulation.
+
+ARGUMENT:: envelope
+Needs a SPEnv object.
+
+
+METHOD:: loop
+(describe method here)
+
+ARGUMENT:: n
+(describe argument here)
+
+returns:: (describe returnvalue here)
+
+
+METHOD:: pos
+Position in the original sound file.
+
+METHOD:: merge
+merges two periods like a mix pitchshifted so that the period lenght is merged.
+
+ARGUMENT:: aPeriod
+
+ARGUMENT:: pan
+volume factor for the added period.
+
+ARGUMENT:: sizeBlend
+0 length/freq of the original period
+1 length/freq of the added period
+
+
+METHOD:: parent
+Reference to parent SPList
+
+METHOD:: transpose
+Mulitiplication of the lenth of a Period.
+
+returns:: (describe returnvalue here)
+
+METHOD:: gain
+Mulitiplication of the amplitude of a Period.
+
+returns:: (describe returnvalue here)
+
+
+METHOD:: reset
+removes all transformations applied on a Period
+
+
+METHOD:: addSine
+add a sine to a existing Period.
+
+ARGUMENT:: ot
+Overtone.
+
+ARGUMENT:: sinamp
+volume of the sine.
+
+ARGUMENT:: inamp
+volume of the original Period.
+
+
+SECTION:: Complex methods
+
+No time right now to document.
+
+METHOD:: addEffect
+(describe method here)
+
+ARGUMENT:: name
+(describe argument here)
+
+ARGUMENT::  ... args
+(describe argument here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: transposeCurve
+(describe method here)
+
+ARGUMENT:: p1
+(describe argument here)
+
+ARGUMENT:: p2
+(describe argument here)
+
+ARGUMENT:: p3
+(describe argument here)
+
+returns:: (describe returnvalue here)

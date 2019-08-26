@@ -1,0 +1,589 @@
+TITLE:: SPList
+summary:: a collection of Periods for waveset synthesis
+categories:: SPList
+related:: Classes/SPList, Classes/Period, Classes/SPEnv, Classes/NRTServerOptions
+
+DESCRIPTION::
+
+SPlist is a set of classes for non-realtime-soundfile-transformation.
+
+You need to have the programm "splistanalyst" installed.
+
+SPList is like a List operating on its own content, it is not creating a new copy.
+
+Many methods work in the same way as methods of Collection and List work I do not document them here.
+
+The SPL.sc file contains extensions to splist which provide specific use cases they are not documented here for now.
+
+
+CLASSMETHODS::
+
+PRIVATE:: resample
+
+METHOD:: new
+creates a new empty SPList. Usually not used by hand.
+
+INSTANCEMETHODS::
+
+SECTION:: Bund methods
+
+These are the four STRONG::bund:: methods that generate a single value from the values of a type in a SPList.
+
+METHOD:: avr
+average of all values in a SPList.
+METHOD:: sum
+sum of all values in a SPList.
+METHOD:: small
+smallest of all values in a SPList.
+METHOD:: big
+biggest of all values in a SPList.
+
+ARGUMENT:: type
+type of analysed data: \amp,\rms,\freq,\length,\sec,\peaks,\delta
+
+returns:: a Float
+
+METHOD:: subavr
+METHOD:: subsum
+METHOD:: subsmall
+METHOD:: subbig
+
+When the elements of a SPList are SPLists it might be desirable to calculate their values with a different function than the top layer. The bund function for the containing SPLists is given as argument.
+
+ARGUMENT:: type
+type of analysed data: \amp,\rms,\freq,\length,\sec,\peaks,\delta
+
+ARGUMENT:: bund
+If the SPList contains SPLists bund defines how they are calculated together. Choose either of the following Symbol: \avr, \sum, \small, \big
+
+returns:: a Float
+
+SECTION:: Clumping methods
+
+METHOD:: grainThreshNeg
+
+Clumps all periods together starting from the point when a threshhold is crossed towards a lower value of a type until it happens again.
+
+METHOD:: grainThreshPos
+
+Clumps all periods together starting from the point when a threshhold is crossed towards a higher value of a type until it happens again.
+
+METHOD:: grainThreshSplit
+
+Clumps all periods together between crossings of a threshhold (in both directions).
+
+ARGUMENT:: threshhold
+Threshhold value
+
+ARGUMENT:: type
+type of analysed data either of the following Symbol: \amp,\rms,\freq,\length,\sec,\peaks,\delta
+
+ARGUMENT:: bund
+If the SPList contains SPLists bund defines how they are calculated together. Choose either of the following Symbol: \avr, \sum, \small, \big
+
+returns:: (describe returnvalue here)
+
+METHOD:: grainMax
+
+Clumps all periods together between two maxima of a value of a type.
+
+METHOD:: grainMin
+Clumps all periods together between two minima of a value of a type.
+
+ARGUMENT:: type
+type of analysed data: \amp,\rms,\freq,\length,\sec,\peaks,\delta
+
+ARGUMENT:: bund
+If the SPList contains SPLists bund defines how they are calculated together. Choose either of the following Symbol: \avr, \sum, \small, \big
+
+SECTION:: Split methods (alternative to Clumping methods)
+
+Split methods split a SPList into two parts (and put these two parts as suplist into the SPList)
+
+METHOD:: splitHalf
+Split a list in the middle of the SPList.
+
+METHOD:: splitAfter
+Split after Nth element of a SPList.
+
+METHOD:: splitBefore
+Split before Nth element of a SPList.
+
+ARGUMENT:: at
+Integer position.
+
+METHOD:: splitNextMax
+Split at next local maximum of a value of a type.
+METHOD:: splitNextMin
+Split at next local minmum of a value of a type.
+
+ARGUMENT:: area
+This argument describes the number of list elements around the middle of a SPList that are taken into consideration.
+
+ARGUMENT:: type
+type of analysed data: \amp,\rms,\freq,\length,\sec,\peaks,\delta
+
+ARGUMENT:: bund
+If the SPList contains SPLists bund defines how they are calculated together. Choose either of the following Symbol: \avr, \sum, \small, \big
+
+METHOD:: splitN
+Recursive split method. splits SPList N times in two parts.
+
+// RECURSE SPLIT FUNCTIONS
+	// teile deep mal in 2 teile (also 2.pow(deep))
+	// mithilfe der angegebenen splitfunktion und ihrer argumente
+	// wird die splitposition bestimmt
+(describe method here)
+
+ARGUMENT:: deep
+How often sthe split function should be performed.
+ARGUMENT:: sfunc
+Symbol of a split function
+
+ARGUMENT::  ... args
+arguments of a split funtion:
+\splitHalf
+\splitAfter
+\splitBefore
+\splitNextMin
+\splitNextMax
+
+SECTION:: Transformations
+
+METHOD:: loop
+Repeats each element of the SPList n times.
+
+METHOD:: internalloop
+Repeats the whole content of a SPList.
+
+METHOD:: internalloopcopy
+Repeats the whole content of a SPList and create deep copies for each instance.
+
+ARGUMENT:: n
+number of repetition in addition to the existing one.
+
+
+
+METHOD:: env
+Applies a SPEnv Envelope on a SPList.
+
+ARGUMENT:: envelope
+Needs a SPEnv object.
+
+METHOD:: interleave
+interleaves two SPLists
+
+ARGUMENT:: anSPList
+a SPList
+
+ARGUMENT:: cutend
+Boolean
+true: the shorter SPList should define the length of the total new list
+false: the shorter file gets looped.
+
+METHOD:: sortBy
+The usual way to sort a SPList is by this method. A SPList is sorted acording to the values of a type.
+
+ARGUMENT:: type
+type of analysed data: \amp,\rms,\freq,\length,\sec,\peaks,\delta
+
+ARGUMENT:: bund
+If the SPList contains SPLists bund defines how they are calculated together. Choose either of the following Symbol: \avr, \sum, \small, \big
+
+METHOD:: reverse
+reverse the splist
+
+SECTION:: Export and Playback
+
+METHOD:: play
+Play back a SPList. Writes a sound file and plays it back.
+
+ARGUMENT:: spf
+Function that transforms the start pos of each element of a SPList on the top level.
+
+ARGUMENT:: spfd
+Function that transforms the start pos of each element of a SPList on the lower levels.
+
+METHOD:: write
+Writes a sound file.
+
+ARGUMENT:: nrtServerOptions
+a instance of NRTServerOptions.
+
+ARGUMENT:: spf
+Function that transforms the start pos of each element of a SPList on the top level.
+
+ARGUMENT:: spfd
+Function that transforms the start pos of each element of a SPList on the lower levels.
+
+
+SECTION:: Helper methods
+
+METHOD:: nodecount
+Returns the number of Periods.
+
+returns:: a Integer
+
+METHOD:: parent
+returns the parent of a SPList.
+
+returns:: a SPList
+
+METHOD:: flat
+Make SPList flat again. Remove all clumping of SPLists.
+
+METHOD:: length
+Length in samples of a SPList
+
+METHOD:: howDeep
+returns how deep the SPList structure is.
+
+METHOD:: performOnPeriod
+Perform a method on the Periods within a SPList
+
+ARGUMENT:: method
+method key
+
+ARGUMENT::  ... args
+argument of the method
+
+returns:: a Integer
+
+METHOD:: appendSPList
+Append a SPList to this SPList
+
+ARGUMENT:: anSPList
+
+METHOD:: deepCopy
+Creates a deepCopy of a SPList. This is necessary when different transformations on the same source material should be applied.
+
+returns:: a SPList
+
+METHOD:: reset
+Attempts to bring a SPList into its original shape. But it can not recreate deleted Periods.
+
+METHOD:: flatSub
+Some kind of wheiered flattening method
+METHOD:: flattenSub
+another strange flatten method
+
+METHOD:: print
+Print values of a specific type of the SPList. (should make use of bund method)
+
+ARGUMENT:: type
+type of analysed data: \amp,\rms,\freq,\length,\sec,\peaks,\delta
+
+
+METHOD:: doDeep
+apply a do on all levels of a SPList structure.
+
+ARGUMENT:: function
+The first argument is the current splist.
+The second argument is the value of deepness.
+
+
+
+
+
+
+PRIVATE:: grainTest
+PRIVATE:: getArrayOfValues
+PRIVATE:: getValuesInArray
+PRIVATE:: appendIntoParent
+PRIVATE:: load_envs
+PRIVATE:: swap
+PRIVATE:: load_bufs
+PRIVATE:: initUsing
+PRIVATE:: separate
+PRIVATE:: quickSortRange
+PRIVATE:: indexOf
+PRIVATE:: detectIndex
+PRIVATE:: prAddlistDo
+PRIVATE:: getNextMin
+PRIVATE:: foldPut
+PRIVATE:: collect
+PRIVATE:: addenv
+PRIVATE:: delete
+PRIVATE:: clipAt
+PRIVATE:: clipPut
+PRIVATE:: removeAt
+PRIVATE:: prSetParent
+PRIVATE:: put
+PRIVATE:: add
+PRIVATE:: array
+PRIVATE:: quickSort
+PRIVATE:: putSubDo
+PRIVATE:: foldAt
+PRIVATE:: first
+PRIVATE:: prDellistDo
+PRIVATE:: doAdjacentPairs
+PRIVATE:: addFirst
+PRIVATE:: init
+PRIVATE:: scramble
+PRIVATE:: deepsum
+PRIVATE:: copyRange
+PRIVATE:: clump
+PRIVATE:: wrapPut
+PRIVATE:: replace
+PRIVATE:: find
+PRIVATE:: load_periods
+PRIVATE:: nrts_buf
+PRIVATE:: select
+PRIVATE:: copy
+PRIVATE:: copyFromStart
+PRIVATE:: wrapAt
+PRIVATE:: at
+PRIVATE:: detect
+PRIVATE:: flatten
+PRIVATE:: doesNotUnderstand
+PRIVATE:: remove
+PRIVATE:: prTestAllParents
+PRIVATE:: grain
+PRIVATE:: minTest
+PRIVATE:: last
+PRIVATE:: dellist
+PRIVATE:: maxTest
+PRIVATE:: clear
+PRIVATE:: species
+PRIVATE:: plot
+PRIVATE:: getNextMax
+PRIVATE:: insert
+PRIVATE:: cue
+PRIVATE:: sort
+PRIVATE:: addlist
+PRIVATE:: node
+PRIVATE:: copyToEnd
+
+
+
+EXAMPLES::
+
+code::
+//start
+s.boot
+
+// the play method creates wav files in your /tmp/ folder maybe you have to delete them yourself when you restart your computer seldome
+
+//load file
+a=SPLSourceFile.newSPL(2,"test.wav");//choose your example file
+
+//show file
+// a.plot // not impmented anymore
+
+//play file
+a.play // plays file after being reconstructed + 1 second
+
+//transform: transpose
+a.do{|i|i.transpose(2)}.play
+
+//reset
+a.reset
+
+//transform: transpose each period differently
+a.do{|i|i.transpose(rrand(0.9,1.1))}.play
+
+//reset only works sometimes not when used loop or delete!!
+
+//transposeTo
+a.do{|i|i.transposeToFreq(440)}.play
+a.reset
+
+//gain
+a.do{|i|i.gain(exprand(1,0.1))}.play
+a.reset
+
+//addSine 4th overtone, volume of sine,volume of original sound
+a.do{|i|i.addSine(4,0.5,0.5)}.play
+a.reset
+
+//merge
+b=SPLSourceFile.newSPL(2,"test.wav");
+b.reverse
+a.do{|item,i|item.merge(b[i])}.play
+a.reset
+
+//env in the moment env is based on my
+//SPEnv subclass of Env because i added
+//a write method ... this now also aviable in Env
+//so this will be changed
+e=SPEnv.new([0,1,0], [1,1],'welch');
+a.do{|i|i.env(e)}.play; //some kind of amplitude modulation
+a.reset
+
+
+//new effect
+
+(
+//!!! it will be loud!!!
+SynthDef("distortion",{arg size;
+	//env is important to mute some rests
+	var env=EnvGen.ar(Env.new([1,1,0], [size/SampleRate.ir,0]), doneAction: 2);
+	//input
+	var sig=In.ar(100);
+	//the effect
+	sig=sig%2-1*0.1;
+	//output_
+	ReplaceOut.ar(100,sig);
+}).writeDefFile;
+)
+
+a.do{|i|i.addEffect(\distortion)}.play;
+a.reset
+
+
+//sequence transformations
+//sorting
+a.sort{|a,b|a.peaks<b.peaks}.play;
+a.sortBy(\amp).play;
+a.sortBy({|i|1-i.amp}).play;
+
+//interleaving
+b=SPLSourceFile.newSPL(2,"sounds/a11wlk01.wav");
+a.interleave(b);
+a.play
+a=SPLSourceFile.newSPL(2,"sounds/a11wlk01.wav");
+
+
+//grouping:
+
+//grain
+a.grainMin(\amp);
+a.grainMin(\amp,\avr);
+a.sortBy(\amp);
+a.play;
+a.reset;
+
+a.grainMax(\freq);
+a.grainMax(\freq,\avr);
+a.grainMax(\freq,\avr);
+a.sortBy(\amp);
+a.play;
+a.reset;
+
+//thresh
+a.grainThreshPos(a.avr(\amp),\amp,\avr);
+a.sortBy(\amp);
+a.play;
+a.reset;
+
+a.grainThreshSplit(a.avr(\amp),\amp,\avr);
+a.sortBy(\amp);
+a.play;
+a.reset;
+
+//split
+a.splitN(7,\splitNextMin,90,\amp,\avr);
+a.sortBy(\amp);
+a.play;
+a.reset;
+
+//loop
+a.do({|item,i,s,b|item.loop(item.amp.linlin(s,b,0,10).round)},a.small(\amp),a.big(\amp)).play
+a=SPLSourceFile.newSPL(2,"sounds/a11wlk01.wav");
+
+//delete
+e=a.avr(\amp);
+a.do{|i|if(i.amp<e,{i.delete})}.play
+a=SPLSourceFile.newSPL(2,"sounds/a11wlk01.wav");
+
+//density
+
+//stretch
+a.play({|startpos,dur,i,item|startpos+(dur*10)})
+
+//layer
+a.play({|startpos,dur,i,item|startpos+(dur/2)})
+
+a.grainMin(\amp,\avr).grainMin(\amp,\avr);
+a.gain(0.4)
+a.play({|startpos,dur,i,item|startpos+(dur/2)})
+a.reset
+
+//deep stretch ... something nobody needs
+a.grainMin(\amp,\avr).grainMin(\amp,\avr).grainMin(\amp,\avr);
+a.play({|startpos,dur,i,item|startpos+dur},{|startpos,dur,i,item,deep|startpos+(dur*(i/5+0.8))})
+a.reset
+
+//toplevel layer deep stretch
+a.grainMin(\amp,\avr).grainMin(\amp,\avr).grainMin(\amp,\avr);
+a.gain(0.3)
+a.play({|startpos,dur,i,item|startpos+(dur/2)},{|startpos,dur,i,item,deep|	startpos+(dur*2)})
+a.reset
+::
+
+SECTION:: Complex methods
+
+No time right now to document.
+
+METHOD:: grainEnv
+(describe method here)
+
+ARGUMENT:: levels
+(describe argument here)
+
+ARGUMENT:: times
+(describe argument here)
+
+ARGUMENT:: curves
+(describe argument here)
+
+ARGUMENT:: releaseNode
+(describe argument here)
+
+ARGUMENT:: loopNode
+(describe argument here)
+
+returns:: (describe returnvalue here)
+
+
+METHOD:: pitchShift
+(describe method here)
+
+ARGUMENT:: fx
+(describe argument here)
+
+ARGUMENT::  ... args
+(describe argument here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: timeStretchRand
+(describe method here)
+
+ARGUMENT:: newtime
+(describe argument here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: timeStretch
+(describe method here)
+
+ARGUMENT:: newtime
+(describe argument here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: pitchShiftLoop
+(describe method here)
+
+ARGUMENT:: fx
+(describe argument here)
+
+ARGUMENT::  ... args
+(describe argument here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: transposeCurve
+(describe method here)
+
+ARGUMENT:: p1
+(describe argument here)
+
+ARGUMENT:: p2
+(describe argument here)
+
+ARGUMENT:: p3
+(describe argument here)
+
+returns:: (describe returnvalue here)

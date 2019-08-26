@@ -1,0 +1,25 @@
+TITLE:: SPEnv
+summary:: A wrapper for Envelops to be used with SPList
+categories:: SPList
+related:: Classes/SPList, Classes/Period, Classes/SPEnv, Classes/NRTServerOptions
+
+DESCRIPTION::
+Maybe there would be a better way to do what i do but i don't know.
+This class provides the possibility to write an Env to a soundfile. I think that is not needed anymore.
+
+CLASSMETHODS::
+
+INSTANCEMETHODS::
+
+METHOD:: sampleRate
+set the sample rate of the sound file to be written.
+
+METHOD:: write
+creates a soundfile that contains the envelope
+
+PRIVATE:: bufnum
+METHOD:: size
+length of the soundfile in samples
+
+METHOD:: filename
+filename of the sound file

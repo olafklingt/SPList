@@ -1,0 +1,74 @@
+TITLE:: NRTServerOptions
+summary:: ServerOptions for NRT synsthesis
+categories:: SPList
+related:: Classes/SPList, Classes/Period, Classes/SPEnv, Classes/NRTServerOptions
+
+DESCRIPTION::
+ServerOptions encapsulates various options for a server app within an object. But not all. Many aspects that are important for NRT systhesis are not encapsulated in the ServerOptions.
+Because of this made a new Class that encapsulates all options needed to do NRT synthesis.
+
+
+CLASSMETHODS::
+
+METHOD:: new
+(describe method here)
+
+ARGUMENT:: ofn
+output audio filename
+
+ARGUMENT:: oscfn
+oscFilename
+
+ARGUMENT:: ifn
+input audio filename
+
+ARGUMENT:: sr
+sample rate
+
+ARGUMENT:: hf
+header format
+
+ARGUMENT:: sf
+sample format
+
+ARGUMENT:: oc
+number of output channels
+
+ARGUMENT:: v
+server verbosity
+
+METHOD:: server
+program name of the used server "scsynth" by default.
+
+METHOD:: tempfileOptionsString
+creates a NRTServerOptions for files in temp folder (as it works at least in standard linux)
+
+PRIVATE:: initClass
+
+
+INSTANCEMETHODS::
+
+METHOD:: asOptionsString
+returns the options as string
+
+METHOD:: outputChannels
+default is 1
+METHOD:: verbosity
+default is -2
+METHOD:: sampleFormat
+default is WAV
+METHOD:: inputFilename
+default is no inputfile
+METHOD:: outputFilename
+no default value
+METHOD:: headerFormat
+default is float
+METHOD:: oscFilename
+default is outputFilename.osc
+METHOD:: sampleRate
+default is Server.default.sampleRate
+METHOD:: deleteOSCFile
+delete OSC file
+
+METHOD:: write
+apply the options and create the file
