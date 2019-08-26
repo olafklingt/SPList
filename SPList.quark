@@ -2,7 +2,7 @@
 // required:
     \name:           "SPList",
     \path:           "SPList", // almost always the same as the quark name
-    \summary:        "Concatinate Synthesis",
+    \summary:        "nrt concatenative synthesis",
     \author:         "Olaf Hochherz",
 
 // optional:
