@@ -169,17 +169,17 @@ SPLSourceFile{
 		// Period.newUsing(
 
 		result[\stt].size.do{|i|
-			var start=out[\stt][i];
-			var length=out[\end][i]-start;
-			var amp=out[\amp][i];
-			var sum=out[\sum][i];
+			var start=result[\stt][i];
+			var length=result[\end][i]-start;
+			var amp=result[\amp][i];
+			var sum=result[\sum][i];
 			var rms=sum/length;
 			afh.putDoubleLE(start);
 			afh.putDoubleLE(length);
 			afh.putDoubleLE(amp);
 			afh.putDoubleLE(rms);
-			afh.putDoubleLE(out[\pek][i]);
-			afh.putDoubleLE(out[\dlt][i]);
+			afh.putDoubleLE(result[\pek][i]);
+			afh.putDoubleLE(result[\dlt][i]);
 
 			// parent.array=Array.fill(ana.length/48,{|i|
 			// Period.newUsing(this,parent,i,*({ana.getDoubleLE}!6))});
