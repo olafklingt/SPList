@@ -1,9 +1,10 @@
-This is the package of SPList.
+This is the quark of SPList.
 
 have fun!
 
 copy the SPList folder in your supercollider extensions folder
-and compile splistanalyst with make make install ...
+on linux simply compile splistanalyst with make make install ...
+now splistanalyst is not necessary anymore but recomended because tested.
 
 It is written by Olaf Hochherz
 All the code is licensed under GPL v3.0
