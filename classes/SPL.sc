@@ -158,3 +158,93 @@
 		^this*size/100;
 	}
 }
+
++ SoundFileAnalysis {
+	analyzeFileForSPList { |path, start = (0), duration, which, maxDataPoints = (1000)|
+		var result = ();
+		var nix1=if(File.exists(path).not) { "\nFile not found: %\n".format(path).warn; ^this };
+		var nix2=which = (which ?? { analysisMethods.keys.as(Array).sort }).asArray;
+		// fork {
+		var resultpaths, oscpath, score;
+		var analysisDuration, soundFile, cond;
+		var server = Server(("dummy"++counter).asSymbol);
+		counter=counter+1;
+
+		// get duration and numChannels from soundFile
+		soundFile = SoundFile.openRead(path);
+		analysisDuration = min(duration ?? { soundFile.duration - start }, soundFile.duration)+(1/soundFile.sampleRate);//todo made by me roughly
+		analysisDuration=analysisDuration.roundUp(1/soundFile.sampleRate);
+
+		// (analysisDuration*soundFile.sampleRate);
+
+		soundFile.close;
+
+		// first we build a score
+		score = Score.new;
+		resultpaths = this.prAddAnalysisToScore(score, which, server, analysisDuration, soundFile, maxDataPoints, start);
+
+		// cond = Condition.new;
+
+		// then we record it
+		// osc file path, output path, input path - input is soundfile to analyze
+		// actually this isn't really needed, but I leave it in here.
+		oscpath = PathName.tmp +/+ UniqueID.next ++ ".osc";
+		score.recordSyncNRT(oscpath, "/dev/null",
+				//path,
+			sampleRate: soundFile.sampleRate,
+			options: ServerOptions.new
+			.verbosity_(-1)
+			//.memSize_(8192 * which.size) // REALLY NEEDED?
+			.memSize_(8192 * 256) // REALLY NEEDED?
+			.blockSize_(1)
+			.sampleRate_(soundFile.sampleRate),
+			// action: { cond.unhang }  // this re-awakens the process after NRT is finished
+		);
+
+		// result.put(\kill, { systemCmd("kill" + server.pid) });
+		// cond.hang;  // wait for completion
+
+		this.prReadAnalysisFiles(result, resultpaths, which, maxDataPoints);
+
+		File.delete(oscpath);
+		Server.all.remove(server);
+
+		result.use {
+			try { ~fileName = path.basename }; // seems not to work properly under ubuntu
+			~path = path;
+			~analysisStart = start;
+			~analysisDuration = analysisDuration;
+			~fileNumChannels = soundFile.numChannels;
+			~dataDimensions = which;
+			~dataTable = { ~dataDimensions.collect { |name| result.at(name) } };
+		};
+
+		// callback.value(result);
+		// };
+		^result
+	}
+}
+
+
++ Score {
+	recordSyncNRT { arg oscFilePath, outputFilePath, inputFilePath, sampleRate = 44100, headerFormat =
+		"AIFF", sampleFormat = "int16", options, completionString="", duration = nil, action = nil;
+		if(oscFilePath.isNil) {
+			oscFilePath = PathName.tmp +/+ "temp_oscscore" ++ UniqueID.next;
+		};
+		this.writeOSCFile(oscFilePath, 0, duration);
+		systemCmd(program + " -N" + oscFilePath.quote
+			+ if(inputFilePath.notNil, { inputFilePath.quote }, { "_" })
+			+ outputFilePath.quote
+			+ sampleRate + headerFormat + sampleFormat +
+			(options ? Score.options).asOptionsString
+			+ completionString, action);
+	}
+
+	*recordSyncNRT { arg list, oscFilePath, outputFilePath, inputFilePath, sampleRate = 44100,
+		headerFormat = "AIFF", sampleFormat = "int16", options, completionString="", duration = nil, action = nil;
+		this.new(list).recordNRTSync(oscFilePath, outputFilePath, inputFilePath, sampleRate,
+			headerFormat, sampleFormat, options, completionString, duration, action);
+	}
+
+}

@@ -6,8 +6,26 @@ SPLSourceFile{
 	var <>soundfilename,<>anafilename,<>sampleRate;
 	var <>bufnum=nil;
 	*initClass {
-		program="splistanalyst";
-		programargs="";
+		Platform.case(
+			\osx,       {
+				program=nil;
+				programargs=nil;
+			},
+			\linux,     {
+				if("type -P \"splistanalystBLOCKEDFORNOW!\"".systemCmd==0){
+					program="splistanalyst";
+					programargs="";
+				}{
+					program=nil;
+					programargs=nil;
+				}
+			},
+			\windows,   {
+				program=nil;
+				programargs=nil;
+			}
+		);
+
 	}
 	// returns a SPLSourceFile which is normaly not used
 	*new{arg minsize,soundfilename,anafilename,minvol=0;
@@ -30,26 +48,32 @@ SPLSourceFile{
 	}
 	// starts the analyse command only when its not done allready
 	analyseSoundfile{
-		var orgfile,com;
+		var orgfile,com,shouldAna;
 		var soundfile=SoundFile.new;
+		var afe=File.exists(anafilename).debug(\afe);
 		soundfile.openRead(soundfilename);
 		this.sampleRate=soundfile.sampleRate;
 		soundfile.close;
-		if(File.exists(anafilename).not,{
-			com=program+programargs;
-			com=com+"\""++soundfilename++"\"";
-			com=com+"\""++anafilename++"\"";
-			com=com+minsize;
-			com=com+minvol;
-			com.systemCmd.postln;
-			if(File.exists(anafilename),{
-				"OK".postln;
-			},{
-				("file should exist:"++anafilename).postln
-			});
-		},{
-			("file exists:"++anafilename).postln
-		});
+		shouldAna=if(afe){File.mtime(soundfilename).debug(\sft)>File.mtime(anafilename).debug(\aft)}{true};
+		if(shouldAna.debug(\sa)){
+			if(program.isNil.debug(\pin)){
+				this.prNoProgWriteAnaFile(soundfilename,anafilename);
+			}{
+				com=program+programargs;
+				com=com+"\""++soundfilename++"\"";
+				com=com+"\""++anafilename++"\"";
+				com=com+minsize;
+				com=com+minvol;
+				com.systemCmd.postln;
+				if(File.exists(anafilename),{
+					"analysis success".postln;
+				},{
+					("file should exist but does not:"++anafilename).postln
+				});
+			}
+		}{
+			("file exists:"+anafilename+"no need to analyze again.").postln
+		};
 	}
 
 	prFillPeriodArray{arg parent;
@@ -63,6 +87,104 @@ SPLSourceFile{
 		var spl=SPList.new;
 		this.prFillPeriodArray(spl);
 		^spl;
+	}
+
+	prNoProgGetAnz{|fn|
+		var f=SoundFile.openRead(fn).postln;
+		var nf= f.numFrames;
+		var sfa=SoundFileAnalysis();
+		var result;
+		sfa.add(\pn, \trig, { |sig|
+			var p=Phasor.ar(0, 1, 0, inf);
+			var ct = (Delay1.ar(sig)<0)&(sig>=0)|((p-nf+1)>0);
+
+			var count = PulseCount.ar(ct);
+			var wt = Phasor.ar(0,1,nf * -1 +1,inf);
+			[wt, count]
+		});
+		result=sfa.analyzeFileForSPList(fn,0,nf);
+		^(result.pn.last+1);
+	}
+
+	prNoProgWriteAnaFile{|sfn,afn|
+		var result;
+		var f=SoundFile.openRead(sfn).postln;
+		var afh=File(afn,"wb");
+		var nf= f.numFrames;
+		var anz=this.prNoProgGetAnz(sfn);
+		var sfa=SoundFileAnalysis();
+		sfa.add(\stt, \trig, { |sig|
+			var p=Phasor.ar(0, 1, 0, inf);
+			var trig = (Delay1.ar(sig)<0)&(sig>=0)|((p-nf+1)>0);
+			var end = Latch.ar(Phasor.ar(0, 1, 0, inf),trig);
+			var start = Latch.ar(Delay1.ar(end),trig);
+			[trig, start]
+		});
+		sfa.add(\end, \trig, { |sig|
+			var p=Phasor.ar(0, 1, 0, inf);
+			var trig = (Delay1.ar(sig)<0)&(sig>=0)|((p-nf+1)>0);
+			var end = Latch.ar(Phasor.ar(0, 1, 0, inf),trig);
+			[trig, end]
+		});
+		sfa.add(\sum, \trig, { |sig|
+			var p=Phasor.ar(0, 1, 0, inf);
+			var trig = (Delay1.ar(sig)<0)&(sig>=0)|((p-nf+1)>0);
+			var sum = Integrator.ar(Delay1.ar(sig).abs,1-trig);
+			var out = Latch.ar(sum,trig);
+			[trig, out]
+		});
+		sfa.add(\dlt, \trig, { |sig|
+			var p=Phasor.ar(0, 1, 0, inf);
+			var trig = (Delay1.ar(sig)<0)&(sig>=0)|((p-nf+1)>0);
+			var a=Delay1.ar(sig);
+			var b=Delay1.ar(Select.ar(trig,[a,DC.ar(0)]));
+			// var old =
+			var sum = Integrator.ar((a-b).abs,1-trig);
+			var out = Latch.ar(sum,trig);
+			// Poll(trig,sum,\s);
+			// Poll(trig,out,\o);
+			// Poll(trig,p,\p);
+			[trig, out]
+		});
+		sfa.add(\amp, \trig, { |sig|
+			var p=Phasor.ar(0, 1, 0, inf);
+			var trig = (Delay1.ar(sig)<0)&(sig>=0)|((p-nf+1)>0);
+			var sigd=Delay1.ar(sig);
+			var sum = Amplitude.ar(sigd,0,Delay1.ar(Select.ar(trig,[DC.ar(inf),DC.ar(0)])));
+			var out = Latch.ar(sum,trig);
+			[trig, out]
+		});
+		sfa.add(\pek, \trig, { |sig|
+			var p=Phasor.ar(0, 1, 0, inf);
+			var trig = (Delay1.ar(sig)<0)&(sig>=0)|((p-nf+1)>0);
+			var p1=Delay1.ar(sig);
+			var p2=Delay1.ar(p1);
+			var p3=Delay1.ar(p2);
+			var pt=((p1<p2)&(p2>p3))|((p1>p2)&(p2<p3));
+			var count = PulseCount.ar(pt,trig);
+			[trig, count]
+		});
+
+		result=sfa.analyzeFileForSPList(sfn,0,nf,maxDataPoints: anz);
+		// Period.newUsing(
+
+		result[\stt].size.do{|i|
+			var start=out[\stt][i];
+			var length=out[\end][i]-start;
+			var amp=out[\amp][i];
+			var sum=out[\sum][i];
+			var rms=sum/length;
+			afh.putDoubleLE(start);
+			afh.putDoubleLE(length);
+			afh.putDoubleLE(amp);
+			afh.putDoubleLE(rms);
+			afh.putDoubleLE(out[\pek][i]);
+			afh.putDoubleLE(out[\dlt][i]);
+
+			// parent.array=Array.fill(ana.length/48,{|i|
+			// Period.newUsing(this,parent,i,*({ana.getDoubleLE}!6))});
+		};
+		afh.close;
 	}
 }
 
@@ -105,13 +227,13 @@ SPList : Collection{
 
 	/*	// klar oder?
 	*newClear{arg size,par=nil;
-		var out;
-		^super.newClear(size).addlist_(LinkedList.new).dellist_(LinkedList.new);
+	var out;
+	^super.newClear(size).addlist_(LinkedList.new).dellist_(LinkedList.new);
 	}
 	*/
 	prTestAllParents{|k=0|
 		array.do{|i|
-		//this.do{|i|
+			//this.do{|i|
 			k=k+1;
 			if((i.parent===this).not,{"i.parent!=this".postln;SPList.par.last.postln;i.parent.postln;k.postln;^false});
 			if((i.testAllParents(k)).not,{"!i.testAllParents".postln;k.postln;^false});
@@ -248,9 +370,9 @@ SPList : Collection{
 		dj = this.at(j);
 		if (function.value(di, dj).not, { // i.e., should di precede dj?
 			this.swap(i,j);
-				 tt = di;
-				 di = dj;
-				 dj = tt;
+			tt = di;
+			di = dj;
+			dj = tt;
 		});
 		if ( n > 2, { // More than two elements.
 			ij = (i + j) div: 2;  // ij is the midpoint of i and j.
@@ -270,20 +392,20 @@ SPList : Collection{
 				k = i;
 				l = j;
 				while ({
-				 	while ({
-				 		l = l - 1;
-				 		k <= l and: { function.value(dij, this.at(l)) }
-				 	}); // i.e. while dl succeeds dij
-				 	while ({
-				 		k = k + 1;
-				 		k <= l and: { function.value(this.at(k), dij) };
-				 	}); // i.e. while dij succeeds dk
-				 	k <= l
+					while ({
+						l = l - 1;
+						k <= l and: { function.value(dij, this.at(l)) }
+					}); // i.e. while dl succeeds dij
+					while ({
+						k = k + 1;
+						k <= l and: { function.value(this.at(k), dij) };
+					}); // i.e. while dij succeeds dk
+					k <= l
 				},{
 					this.swap(k, l);
 				});
-		// Now l<k (either 1 or 2 less), and di through dl are all less than or equal to dk
-		// through dj.  Sort those two segments.
+				// Now l<k (either 1 or 2 less), and di through dl are all less than or equal to dk
+				// through dj.  Sort those two segments.
 				this.quickSortRange(i, l, function);
 				this.quickSortRange(k, j, function);
 			});
@@ -320,7 +442,7 @@ SPList : Collection{
 		nsize.do({ arg i;
 			var subarr=array.copyRange(i*groupSize,(i*groupSize)+groupSize-1);
 			list.add(SPList.newUsing(subarr,this));
-			});
+		});
 		array=list;
 	}
 
@@ -354,7 +476,7 @@ SPList : Collection{
 			if(item.size>0,{
 				if(item.avr(type).isNil,{["error: itemavrtype is nil",item,\avr,type,localsize].postln});
 				if(localsize.isNil,{["error: size is nil",item,\avr,type,localsize].postln});
-			val=val+(item.avr(type)/localsize)})};
+				val=val+(item.avr(type)/localsize)})};
 		^val;
 	}
 	// kleinster aller werte eines typs
@@ -382,7 +504,7 @@ SPList : Collection{
 		var val=0,size=this.size;
 		this.array.do{|item|
 			if(item.size>0,{
-			val=val+(item.perform(bund,type)/size)})};
+				val=val+(item.perform(bund,type)/size)})};
 		^val;
 	}
 	subsum{arg type,bund;
@@ -528,7 +650,7 @@ SPList : Collection{
 				{
 					out=out+1;
 					count=1;
-				},{count=count+1});
+			},{count=count+1});
 			if(akt_v!=next_v,{old_v=akt_v;});
 			old_v=akt_v;
 			akt_v=next_v;
@@ -553,7 +675,7 @@ SPList : Collection{
 					this.add(arr);
 					last=akt_p;
 					count=1;
-				},{count=count+1;});
+			},{count=count+1;});
 			if(akt_v!=next_v,{old_v=akt_v;});
 			akt_v=next_v;
 			next_v=oldarr[akt_p].perform(bund,type);

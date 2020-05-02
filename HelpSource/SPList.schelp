@@ -7,7 +7,9 @@ DESCRIPTION::
 
 SPlist is a set of classes for non-realtime-soundfile-transformation.
 
-You need to have the programm "splistanalyst" installed.
+For the most reliable and well tested analysis of a sound file you need to have the programm "splistanalyst" installed. In the moment I make the assumption that "splistanalyst" would be only installed on linux.
+
+Now sound-file analysis files can also be created from within supercollider but the process is not well tested.
 
 SPList is like a List operating on its own content, it is not creating a new copy.
 
