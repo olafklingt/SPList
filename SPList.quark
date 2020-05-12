@@ -11,6 +11,8 @@
     \ext_dependancy: "",
     \url:            "https://github.com/olafklingt/splist",
 
+    \dependencies:   ["SoundFileAnalysis"]
+
 // If the quark depends on other quarks, you can specify it as a list containing:
 // (1) strings (just the quark name)
     \dependencies:   ["MathLib","redUniverse"]
