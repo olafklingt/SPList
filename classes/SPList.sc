@@ -12,7 +12,7 @@ SPLSourceFile{
 				programargs=nil;
 			},
 			\linux,     {
-				if("type -P \"splistanalystBLOCKEDFORNOW!\"".systemCmd==0){
+				if("type -P \"splistanalyst\"".systemCmd==0){
 					program="splistanalyst";
 					programargs="";
 				}{

@@ -46,7 +46,7 @@ NRTServerOptions
 		("rm "++this.oscFilename).systemCmd;
 	}
 	*tempfileOptionsString{
-		^super.new.init("/tmp/splist_tmp_"++BeatSched.time.asInteger++".wav");
+		^super.new.init(Platform.defaultTempDir +/+ "splist_tmp_"++BeatSched.time.asInteger++".wav");
 	}
 
 }
