@@ -167,7 +167,7 @@
 		// fork {
 		var resultpaths, oscpath, score;
 		var analysisDuration, soundFile, cond;
-		var server = Server(("dummy").asSymbol);
+		var server = Server(("dummy"++UniqueID.next).asSymbol);
 
 		// get duration and numChannels from soundFile
 		soundFile = SoundFile.openRead(path);

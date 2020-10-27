@@ -50,13 +50,13 @@ SPLSourceFile{
 	analyseSoundfile{
 		var orgfile,com,shouldAna;
 		var soundfile=SoundFile.new;
-		var afe=File.exists(anafilename).debug(\afe);
+		var afe=File.exists(anafilename);
 		soundfile.openRead(soundfilename);
 		this.sampleRate=soundfile.sampleRate;
 		soundfile.close;
-		shouldAna=if(afe){File.mtime(soundfilename).debug(\sft)>File.mtime(anafilename).debug(\aft)}{true};
-		if(shouldAna.debug(\sa)){
-			if(program.isNil.debug(\pin)){
+		shouldAna=if(afe){File.mtime(soundfilename)>File.mtime(anafilename)}{true};
+		if(shouldAna){
+			if(program.isNil){
 				this.prNoProgWriteAnaFile(soundfilename,anafilename);
 			}{
 				com=program+programargs;
@@ -840,7 +840,7 @@ SPList : Collection{
 				allenvs.add(envelope);
 				aes=allenvs.size;
 				envelope.sampleRate=sampleRate;
-				envelope.filename=Platform.defaultTempDir +/+ "env"++aes++".aif";
+				envelope.filename=PathName.tmp +/+ "env"++aes++".aif";
 				envelope.bufnum=aes+2000;
 			})
 		})
