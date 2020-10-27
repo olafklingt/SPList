@@ -24,7 +24,7 @@ Now splistanalyst is not necessary anymore but recommended because tested.
 
 For the most reliable and well tested analysis of a sound file you need to have the programm "splistanalyst" installed. In the moment I make the assumption that "splistanalyst" would be only installed on linux.
 
-Since the last version of this library it is possible to not use "splistanalyst" and analyse the sound-file within SuperCollider.
+Since the last version of this library "splistanalyst" is not mandatory anymore. It is possible to analyse the sound-file within SuperCollider.
 
 Unlike usual handling of arrays in SuperCollider SPList is like a List that is operating on its own content, it is not creating a new copy!
 
@@ -34,7 +34,7 @@ Unlike usual handling of arrays in SuperCollider SPList is like a List that is o
 //start
 s.boot
 
-// the play method creates wav files in your /tmp/ folder maybe you have to delete them yourself when you restart your computer seldome
+// the play method creates wav files in your /tmp/ folder maybe you have to delete them yourself when you restart your computer seldom
 
 //load file
 a=SPLSourceFile.newSPL(2,"test.wav");//choose your example file
@@ -52,7 +52,7 @@ a.sortBy(\amp).play;
 
 # Disclaimer
 
-It is an old project of mine. The code is sometimes a bit obscure.
+It is an old project of mine, because of this, the code is sometimes a bit messy.
 
 # License
 All the code is licensed under GPL v3.0

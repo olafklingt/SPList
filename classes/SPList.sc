@@ -840,7 +840,7 @@ SPList : Collection{
 				allenvs.add(envelope);
 				aes=allenvs.size;
 				envelope.sampleRate=sampleRate;
-				envelope.filename="/tmp/env"++aes++".aif";
+				envelope.filename=Platform.defaultTempDir +/+ "env"++aes++".aif";
 				envelope.bufnum=aes+2000;
 			})
 		})
@@ -950,4 +950,3 @@ SPList : Collection{
 		// sf.plot(bounds);
 	}
 }
-
