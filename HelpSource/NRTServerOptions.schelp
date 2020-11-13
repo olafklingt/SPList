@@ -38,7 +38,7 @@ ARGUMENT:: v
 server verbosity
 
 METHOD:: server
-program name of the used server "scsynth" by default.
+program name of the used server. The default value is set like the Server.program by Platform.setup.
 
 METHOD:: tempfileOptionsString
 creates a NRTServerOptions for files in temp folder (as it works at least in standard linux)

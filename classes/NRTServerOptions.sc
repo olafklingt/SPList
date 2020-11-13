@@ -9,8 +9,21 @@ NRTServerOptions
 	var <>sampleFormat;
 	var <>outputChannels;
 	var <>verbosity;
-	*initClass{
-		server="scsynth";
+	*initClass {
+		//because the server program is set by the platform after startup and not during intialization i copied the default settings from the different Platforms here.
+		Platform.case(
+			\osx,       {
+				server="exec %/scsynth".format((Platform.resourceDir +/+ "../Resources").shellQuote);
+			},
+			\linux,     {
+				server="exec scsynth";
+			},
+			\windows,   {
+				"this package has not been used on windows if it works or not would be interesting to know please send a message to the developer on github or email.".debug("WARNING:");
+				server="scsynth.exe";
+			}
+		);
+
 	}
 	*new{arg ofn,oscfn,ifn,sr,hf,sf,oc,v;
 		^super.new.init(ofn,oscfn,ifn,sr,hf,sf,oc,v);
@@ -40,7 +53,7 @@ NRTServerOptions
 		^o;//.debug(\NRTServerOptionsAsOptionsString);
 	}
 	write{
-		("scsynth "++this.asOptionsString).systemCmd; // -o 1 is mono output
+		(NRTServerOptions.server++this.asOptionsString).systemCmd; // -o 1 is mono output
 	}
 	deleteOSCFile{
 		("rm "++this.oscFilename).systemCmd;
