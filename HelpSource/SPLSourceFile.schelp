@@ -80,9 +80,9 @@ METHOD:: minvol
 Minimum amplitude (0 to 1) that has to be reached so that a period counts as a distinct period.
 
 PRIVATE:: sampleRate
-PRIVATE: prFillPeriodArray
+PRIVATE:: prFillPeriodArray
 
-PRIVATE: bufnum
+PRIVATE:: bufnum
 
 EXAMPLES::
 
