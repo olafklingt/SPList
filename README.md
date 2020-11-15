@@ -1,6 +1,6 @@
 # SPList
 
-SPlist is a set of classes for non-realtime-soundfile-transformation, that treats sound-files as list of Periods. The name derives from SortablePeriodList.
+SPlist is a set of classes for non-realtime-sound-file-transformation that treats sound-files as a list of Periods. The name derives from SortablePeriodList. A Period is what [Trevor Wishart called a waveset](http://www.trevorwishart.co.uk/transformation.html) Unlike other implementations of waveset-synthesis I analyse each waveset and use this data to group wavesets together to larger grains and to facilitate sorting of wavesets and groups of wavesets.
 
 
 # Installation
