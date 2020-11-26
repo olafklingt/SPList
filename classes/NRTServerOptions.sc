@@ -59,7 +59,7 @@ NRTServerOptions
 		("rm "++this.oscFilename).systemCmd;
 	}
 	*tempfileOptionsString{
-		^super.new.init(PathName.tmp +/+ "splist_tmp_"++BeatSched.time.asInteger++".wav");
+		^super.new.init(PathName.tmp +/+ "splist_tmp_"++TempoClock.default.elapsedBeats.asInteger++".wav");
 	}
 
 }
