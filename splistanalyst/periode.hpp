@@ -1,16 +1,15 @@
-#ifndef PERIODE_H
-#define PERIODE_H
+#pragma once
 #include <fstream>
+#include <span>
 
 using namespace std;
 
-
 typedef double sample_t;
 
-class Periode{
+class Periode {
 private:
-  sample_t* s_vec;
-  int size;
+  span<sample_t> buf;
+
   double v_start;
   int sr;
 
@@ -19,28 +18,21 @@ private:
   double v_summe;
   double v_peaks;
   double v_amp;
-  double v_min;
-  double v_max;
-
 
 public:
-  Periode(sample_t* _s_vec,int _size,int _start,int _sr);
+  Periode(sample_t *_buf, int _size, int _start, int _sr);
   ~Periode();
-  sample_t* getVec();  
-  int getSize();
 
   double rms();
   double delta();
   double summe();
   double peaks();
   double amp();
-  double min();
-  double max();
 
   double length();
   double start();
   double freq();
-  
+
   void print();
   void write_analyse(ofstream *f);
 
@@ -51,9 +43,4 @@ private:
   void a_summe();
   void a_peaks();
   void a_amp();
-  void a_min();
-  void a_max();
-  
 };
-
-#endif

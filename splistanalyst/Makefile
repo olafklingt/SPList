@@ -1,11 +1,11 @@
 INCDIR = /usr/local/include/
-OBJ = main.o periode.o
+OBJ = main.o periode.o sfbuffer.o
 LIBS = `pkg-config sndfile --libs`
-FLAGS = -g -Wall -I$(INCDIR) 
+FLAGS = -std=c++20 -O3 -Wall -I$(INCDIR)
 
 all: splistanalyst
 
-%o: %cpp
+%.o: %.cpp
 	g++ -c $(FLAGS) -o $@ $<
 
 splistanalyst: $(OBJ)
