@@ -17,8 +17,8 @@ public:
 
   int minsize;
 
-public:
   SFBuffer(char *filename, int minsize);
+  ~SFBuffer();
   int isZeroCrossing(sample_t old, sample_t next);
   int findZeroCrossing();
   std::unique_ptr<Periode> loadNextPeriode();

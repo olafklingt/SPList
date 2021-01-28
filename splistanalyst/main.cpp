@@ -9,7 +9,6 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
-  // unique_ptr<Periode> p;
   int minsize;
 
   if (argc < 3) {

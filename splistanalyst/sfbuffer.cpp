@@ -24,6 +24,10 @@ SFBuffer::SFBuffer(char *filename, int _minsize) : minsize(_minsize) {
   }
 }
 
+SFBuffer::~SFBuffer() {
+  delete[] buffer;
+}
+
 int SFBuffer::isZeroCrossing(sample_t old, sample_t next) {
   return (old < 0 && next >= 0);
 }
@@ -35,7 +39,7 @@ int SFBuffer::findZeroCrossing() {
     rp++;
   };
   // last period might be shorter than minsize
-  if (rp >= frames)
+  if (rp >= frames - 1)
     return frames - start;
 
   while (!isZeroCrossing(buffer[rp], buffer[rp + 1])) {
