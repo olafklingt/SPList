@@ -15,7 +15,7 @@
 
 // If the quark depends on other quarks, you can specify it as a list containing:
 // (1) strings (just the quark name)
-    \dependencies:   ["MathLib","redUniverse"]
+//    \dependencies:   ["MathLib","redUniverse"]
 // (2) key->value pairs (name->version)
 //  \dependencies:   [("nameOfDependantQuark" -> 1.0)]
 // or (3) arrays with info in this order: [name, version, repositoryBaseUrl]

@@ -6,12 +6,14 @@
 #include <sndfile.h>
 #include <span>
 
+#include <unistd.h>
+
 using namespace std;
 
 int main(int argc, char *argv[]) {
   int minsize;
-
-  if (argc < 3) {
+  cout << "argc" << argc<<endl;
+  if (argc < 4) {
     cout << "usage: infile outfile minsize" << endl << flush;
     return -1;
   };
@@ -23,6 +25,7 @@ int main(int argc, char *argv[]) {
     ofstream outfile(argv[2], ios::out | ios::binary);
 
     while (auto p = sf.loadNextPeriode()) {
+      sleep(10);
       p->write_analyse(&outfile);
     }
 
